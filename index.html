@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BascameWifi Selling Report</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: #10a0eda9;
+      margin: 0;
+    }
+    h1, h2, .center {
+      color: #333;
+      text-align: center;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    label, input, select, button, textarea, th, td {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+    .container {
+      width: 98%;
+      max-width: 1200px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 32px 24px 24px 24px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      overflow-x: auto;
+    }
+    label { margin-top: 10px; display:block; font-weight:600;}
+    input, select, button, textarea {
+      margin-top: 4px; padding: 8px;
+      width: 100%; box-sizing: border-box;
+      border-radius:4px; border:1px solid #ccc;
+    }
+    input[type="number"] { width: 100px;}
+    .flex {
+      display:flex; gap:16px; width:100%; justify-content: center; align-items: flex-end;
+    }
+    .half { flex:1;}
+    .button {
+      width: auto; min-width: 100px;
+      background: #3498db; color: #fff;
+      border: none; cursor: pointer;
+    }
+    .button:disabled { background: #aaa; }
+    .button.red { background: #e74c3c;}
+    .hidden { display: none; }
+    .filter-row { margin: 12px 0 24px 0; }
+    .mb-0 { margin-bottom:0; }
+    .mt-0 { margin-top:0; }
+    .export-btn { float:right; margin-bottom:18px; }
+    .table-wrapper {
+      margin-top: 18px;
+      margin-bottom: 34px;
+      background: #fafafd;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(110,130,208,0.07);
+      padding: 20px 16px 12px 16px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    table {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
+      word-break: break-word;
+    }
+    th, td {
+      border: none;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    th {
+      background: #a8a9ab;
+      font-weight: 700;
+      border-bottom: 2px solid #e0e3ed;
+    }
+    td { border-bottom: 1px solid #afa5a5; }
+    tr:last-child td { border-bottom: none; }
+    td:last-child, th:last-child { text-align: center; }
+    .form-section {
+      margin-bottom: 18px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .form-section form, .filter-row { width:90%; }
+    .role-info { margin-bottom:12px; color:#888; font-style:italic; text-align: center;}
+    .summary-box {
+      width: 90%;
+      margin: 0 auto 18px auto;
+      background: #e9f7ef;
+      border: 1px solid #b4e1d3;
+      border-radius: 8px;
+      padding: 16px;
+      color: #229954;
+      font-size: 1.15em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 32px;
+      font-weight: bold;
+    }
+    .summary-item { flex:1; text-align: center;}
+    .summary-item span { display: block; font-size: 1.35em; margin-top: 4px;}
+    @media (max-width: 900px) {
+      .container { padding: 12px 2px;}
+      .table-wrapper { padding: 8px 2px;}
+      table, .form-section form, .filter-row, .summary-box { width:100%; }
+    }
+    @media (max-width: 768px) {
+      .flex { flex-direction: column;}
+      .half { width: 100%;}
+      table, .form-section form, .filter-row, .summary-box { width:100%; }
+      .summary-box { flex-direction: column; gap: 8px;}
+    }
+    @media (max-width: 600px) {
+      .container, .table-wrapper, .form-section form, .filter-row, .summary-box {
+        width: 100%;
+        padding: 8px 2px;
+      }
+      table {
+        font-size: 13px;
+        width: 100%;
+      }
+      .flex {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .half {
+        width: 100%;
+      }
+      .export-btn {
+        float: none;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+    .table-scroll {
+      max-height: 300px;
+      overflow-y: auto;
+      width: 100%;
+      background: #fafafd;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(110,130,208,0.07);
+      padding: 0;
+      margin-bottom: 34px;
+    }
+    .table-scroll table {
+      margin: 0;
+    }
+    .table-scroll thead th {
+      position: sticky;
+      top: 0;
+      background: #f4f5fa;
+      z-index: 1;
+    }
+    /* Responsive: */
+    @media (max-width: 600px) {
+      .table-scroll {
+        max-height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login Section -->
+    <div id="loginSection" class="container" style="max-width:410px; margin-top:80px;">
+      <h2 class="mb-0 center">Welcome Finance Login</h2>
+      <form onsubmit="return handleLogin(event)">
+        <label>Email / Username</label>
+        <input type="text" id="loginUser" required autocomplete="username">
+        <label>Password</label>
+        <input type="password" id="loginPass" required autocomplete="current-password">
+        <button class="button" type="submit">Login</button>
+        <p id="loginError" class="alert" style="display:none;">Username/email atau password salah!</p>
+        <p class="center" style="margin-top:18px;">
+          Belum punya akun? <a href="#" onclick="showRegister();return false;">Daftar di sini</a>
+        </p>
+      </form>
+    </div>
+    <!-- Register Section -->
+    <div id="registerSection" class="container hidden" style="max-width:460px; margin-top:50px;">
+      <h2 class="mb-0 center">Registrasi Pengguna Baru</h2>
+      <form onsubmit="return handleRegister(event)">
+        <label>Email</label>
+        <input type="email" id="regEmail" required>
+        <label>Username</label>
+        <input type="text" id="regUser" required>
+        <label>Password</label>
+        <input type="password" id="regPass" required>
+        <label>Konfirmasi Password</label>
+        <input type="password" id="regPass2" required>
+        <label>Human Verification: Berapa hasil dari 2 + 3?</label>
+        <input type="number" id="regHuman" required>
+        <button class="button" type="submit">Daftar</button>
+        <p id="registerError" class="alert" style="display:none;"></p>
+        <p id="registerSuccess" class="success" style="display:none;"></p>
+        <p class="center" style="margin-top:18px;">
+          Sudah punya akun? <a href="#" onclick="showLogin();return false;">Login di sini</a>
+        </p>
+      </form>
+    </div>
+    <!-- Admin Confirmation Section -->
+    <div id="confirmSection" class="container hidden" style="max-width:410px; margin-top:80px;">
+      <h2 class="mb-0 center">Konfirmasi Admin</h2>
+      <p class="center">Akun Anda sedang menunggu konfirmasi dari admin.</p>
+      <p class="center" style="margin-top:20px;">
+        <a href="#" onclick="showLogin();return false;">Kembali ke Login</a>
+      </p>
+    </div>
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="container hidden">
+      <h1>Dashboard Report Voucher</h1>
+      <div class="role-info" id="roleInfo"></div>
+      <button class="button export-btn" onclick="exportToCSV()">Export Transaksi ke CSV</button>
+      <span id="notifApprove" style="display:none; background:#e74c3c; color:#fff; padding:4px 12px; border-radius:16px; font-size:15px; margin-left:12px;">
+        Ada akun baru menunggu konfirmasi!
+      </span>
+
+      <!-- SUMMARY -->
+      <div class="summary-box" id="summaryBox">
+        <div class="summary-item">
+          Total Voucher Terjual
+          <span id="totalSold">0</span>
+        </div>
+        <div class="summary-item">
+          Total Pendapatan
+          <span id="totalIncome">Rp0</span>
+        </div>
+      </div>
+
+      <!-- FILTER -->
+      <div class="filter-row flex">
+        <div class="half">
+          <label>Filter Berdasarkan Area</label>
+          <select id="filterArea" onchange="renderTransaksiTable()">
+            <option value="">Semua Area</option>
+          </select>
+        </div>
+        <div class="half">
+          <label>Filter Berdasarkan Nama Penjual</label>
+          <select id="filterPenjual" onchange="renderTransaksiTable()">
+            <option value="">Semua Penjual</option>
+          </select>
+        </div>
+        <div class="half">
+          <label>Filter Berdasarkan Jenis Voucher</label>
+          <select id="filterVoucher" onchange="renderTransaksiTable()">
+            <option value="">Semua Jenis</option>
+          </select>
+        </div>
+        <div class="half">
+          <label>Filter Berdasarkan Tanggal</label>
+          <input type="date" id="filterTanggal" onchange="renderTransaksiTable()">
+        </div>
+        <div class="half">
+          <label>&nbsp;</label>
+          <button class="button" onclick="resetFilter()" type="button">Reset Filter</button>
+        </div>
+      </div>
+
+      <!-- PENJUAL -->
+      <div class="form-section">
+        <h2 style="margin-bottom:8px;">Data Penjual Voucher per Area</h2>
+        <form class="flex" onsubmit="return tambahPenjual(event)">
+          <div class="half">
+            <label>Nama Penjual</label>
+            <input type="text" id="namaPenjual" required>
+          </div>
+          <div class="half">
+            <label>Area</label>
+            <input type="text" id="areaPenjual" required>
+          </div>
+          <div class="half">
+            <label>&nbsp;</label>
+            <button class="button" type="submit" id="btnPenjual">Tambah Penjual</button>
+          </div>
+        </form>
+      </div>
+      <div class="table-wrapper table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Penjual</th>
+              <th>Area</th>
+              <th style="width:150px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="penjualTable"></tbody>
+        </table>
+      </div>
+
+      <!-- VOUCHER -->
+      <div class="form-section">
+        <h2 style="margin-bottom:8px;">Daftar Harga Voucher</h2>
+        <form class="flex" onsubmit="return tambahVoucher(event)">
+          <div class="half">
+            <label>Jenis Voucher</label>
+            <input type="text" id="jenisVoucher" required>
+          </div>
+          <div class="half">
+            <label>Harga</label>
+            <input type="number" id="hargaVoucher" required min="0" step="1000">
+          </div>
+          <div class="half">
+            <label>&nbsp;</label>
+            <button class="button" type="submit" id="btnVoucher">Tambah Voucher</button>
+          </div>
+        </form>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Jenis Voucher</th>
+              <th>Harga</th>
+              <th style="width:150px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="voucherTable"></tbody>
+        </table>
+      </div>
+
+      <!-- TRANSAKSI -->
+      <div class="form-section">
+        <h2 style="margin-bottom:8px;">Laporan Keluar Masuk Voucher</h2>
+        <form class="flex" onsubmit="return tambahTransaksi(event)">
+          <div class="half">
+            <label>Tanggal</label>
+            <input type="date" id="tanggalTransaksi" required>
+          </div>
+          <div class="half">
+            <label>Penjual</label>
+            <select id="transPenjual" required>
+              <option value="">-- Pilih Penjual --</option>
+            </select>
+          </div>
+          <div class="half">
+            <label>Jenis Voucher</label>
+            <select id="transVoucher" required>
+              <option value="">-- Pilih Voucher --</option>
+            </select>
+          </div>
+          <div class="half">
+            <label>Masuk</label>
+            <input type="number" id="masukVoucher" min="0" value="0" required>
+          </div>
+          <div class="half">
+            <label>Keluar</label>
+            <input type="number" id="keluarVoucher" min="0" value="0" required>
+          </div>
+          <div class="half">
+            <label>&nbsp;</label>
+            <button class="button" type="submit">Tambah Transaksi</button>
+          </div>
+        </form>
+      </div>
+      <div class="table-wrapper table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Penjual</th>
+              <th>Area</th>
+              <th>Jenis Voucher</th>
+              <th>Masuk</th>
+              <th>Keluar</th>
+              <th>Sisa Stok</th>
+              <th style="width:150px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="transaksiTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer style="width:100%; text-align:center; margin-top:24px; color:#888; font-size:15px;">
+      <hr style="margin:24px 0 12px 0;">
+      &copy; bascamewifi2025
+    </footer>
+  </div>
+  <script>
+    // User System (dummy, localStorage, no backend)
+    const LS_USERS = "rv_users";
+    const LS_ADMIN_APPROVE = "rv_admin_approve";
+    const LS_SESSION = "rv_session";
+    const LS_PENJUAL = "rv_penjual";
+    const LS_VOUCHER = "rv_voucher";
+    const LS_TRANSAKSI = "rv_trans";
+    function getUsers() { return JSON.parse(localStorage.getItem(LS_USERS) || "[]"); }
+    function setUsers(u) { localStorage.setItem(LS_USERS, JSON.stringify(u)); }
+    function getSession() { return JSON.parse(localStorage.getItem(LS_SESSION) || "null"); }
+    function setSession(sess) { localStorage.setItem(LS_SESSION, JSON.stringify(sess)); }
+    function clearSession() { localStorage.removeItem(LS_SESSION); }
+    function getApproval() { return JSON.parse(localStorage.getItem(LS_ADMIN_APPROVE) || "[]"); }
+    function setApproval(a) { localStorage.setItem(LS_ADMIN_APPROVE, JSON.stringify(a)); }
+    function ensureAdmin() {
+      let users = getUsers();
+      if (!users.some(u => u.role === 'admin')) {
+        users.push({
+          email: "admin@voucher.com",
+          username: "admin",
+          password: "Edwin1895@",
+          role: "admin",
+          confirmed: true
+        });
+        setUsers(users);
+      }
+    }
+    function showLogin() {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('registerSection').classList.add('hidden');
+      document.getElementById('confirmSection').classList.add('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+      clearSession();
+    }
+    function showRegister() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('registerSection').classList.remove('hidden');
+      document.getElementById('confirmSection').classList.add('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+    }
+    function showConfirm() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('registerSection').classList.add('hidden');
+      document.getElementById('confirmSection').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+    }
+    function showDashboard() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('registerSection').classList.add('hidden');
+      document.getElementById('confirmSection').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+    }
+    function handleRegister(e) {
+      e.preventDefault();
+      let email = document.getElementById('regEmail').value.trim().toLowerCase();
+      let username = document.getElementById('regUser').value.trim();
+      let pass = document.getElementById('regPass').value;
+      let pass2 = document.getElementById('regPass2').value;
+      let human = parseInt(document.getElementById('regHuman').value);
+      let errEl = document.getElementById('registerError');
+      let succEl = document.getElementById('registerSuccess');
+      errEl.style.display = 'none'; succEl.style.display = 'none';
+      if (!email || !username || !pass || !pass2) {
+        errEl.innerText = "Semua kolom wajib diisi."; errEl.style.display = 'block'; return false;
+      }
+      if (pass !== pass2) {
+        errEl.innerText = "Password dan konfirmasi tidak cocok."; errEl.style.display = 'block'; return false;
+      }
+      if (human !== 5) {
+        errEl.innerText = "Jawaban human verification salah."; errEl.style.display = 'block'; return false;
+      }
+      let users = getUsers();
+      if (users.some(u => u.username === username || u.email === email)) {
+        errEl.innerText = "Email/username sudah terdaftar."; errEl.style.display = 'block'; return false;
+      }
+      users.push({
+        email, username, password: pass,
+        role: "editor", confirmed: false
+      });
+      setUsers(users);
+      let approval = getApproval();
+      approval.push(username);
+      setApproval(approval);
+      succEl.innerText = "Registrasi berhasil, menunggu konfirmasi admin.";
+      succEl.style.display = 'block';
+      setTimeout(showConfirm, 900);
+      return false;
+    }
+    function handleLogin(e) {
+      e.preventDefault();
+      let user = document.getElementById('loginUser').value.trim();
+      let pass = document.getElementById('loginPass').value;
+      let errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+      let users = getUsers();
+      let u = users.find(u =>
+        (u.email === user || u.username === user) && u.password === pass
+      );
+      if (!u) { errEl.innerText = "Username/email atau password salah!"; errEl.style.display = 'block'; return false; }
+      if (!u.confirmed) { showConfirm(); return false; }
+      setSession({username: u.username, role: u.role});
+      showDashboard();
+      initAll();
+      return false;
+    }
+    function adminApproveList() {
+      let approval = getApproval();
+      // Tampilkan badge notifikasi jika ada akun baru
+      const notif = document.getElementById("notifApprove");
+      if (notif) notif.style.display = approval.length ? "inline-block" : "none";
+
+      if (!approval.length) return;
+      let users = getUsers();
+      let s = `
+        <div id="admin-approve-box" style="background:#fffbe6;border:1px solid #ffe58f;padding:16px 14px 10px 14px;border-radius:8px;margin-bottom:18px;">
+          <h3 style="margin-top:0;color:#b8860b;">Konfirmasi Akun Baru</h3>
+      `;
+      approval.forEach((uname, idx) => {
+        let u = users.find(u => u.username === uname);
+        if (u) {
+          s += `
+            <div style="border-bottom:1px solid #eee; padding:6px 0 5px 0;">
+              <b>${u.username}</b> (${u.email}) <span style="color:#888;">[${u.role}]</span>
+              <button class="button" onclick="approveUser('${uname}')">Konfirmasi</button>
+              <button class="button red" onclick="rejectUser('${uname}')">Tolak</button>
+            </div>`;
+        }
+      });
+      s += `</div>`;
+      setTimeout(() => {
+        let dash = document.getElementById("dashboard");
+        let oldBox = document.getElementById("admin-approve-box");
+        if (oldBox) oldBox.remove();
+        if (dash && document.getElementById("roleInfo").dataset.role === 'admin') {
+          dash.insertAdjacentHTML("afterbegin", s);
+        }
+      }, 300);
+    }
+    function approveUser(uname) {
+      let users = getUsers();
+      let u = users.find(u => u.username === uname);
+      if (u) u.confirmed = true;
+      setUsers(users);
+      let approval = getApproval().filter(a => a !== uname);
+      setApproval(approval);
+      alert("Akun " + uname + " telah disetujui!");
+      location.reload();
+    }
+    function rejectUser(uname) {
+      let users = getUsers();
+      let idx = users.findIndex(u => u.username === uname);
+      if (idx >= 0) users.splice(idx, 1);
+      setUsers(users);
+      let approval = getApproval().filter(a => a !== uname);
+      setApproval(approval);
+      alert("Akun " + uname + " ditolak dan dihapus!");
+      location.reload();
+    }
+    function getData(key) { return JSON.parse(localStorage.getItem(key)||"[]"); }
+    function setData(key, value) { localStorage.setItem(key,JSON.stringify(value)); }
+    function renderPenjualTable() {
+      const penjual = getData(LS_PENJUAL);
+      const tbody = document.getElementById("penjualTable");
+      tbody.innerHTML = penjual.length ? "" : "<tr><td colspan=3>Belum ada penjual.</td></tr>";
+      const sess = getSession();
+      const isAdmin = sess && sess.role === "admin";
+      penjual.forEach((p,i)=>{
+        tbody.innerHTML += `<tr>
+          <td>${p.nama}</td>
+          <td>${p.area}</td>
+          <td>
+            ${isAdmin ? `
+              <button class="button" onclick="editPenjual(${i})">Edit</button>
+              <button class="button red" onclick="hapusPenjual(${i})">Hapus</button>
+            ` : ""}
+          </td>
+        </tr>`;
+      });
+      // update select options
+      const select = document.getElementById("transPenjual");
+      select.innerHTML = '<option value="">-- Pilih Penjual --</option>' +
+        penjual.map(p=>`<option value="${p.nama}">${p.nama}</option>`).join('');
+      // filter area
+      const filterArea = document.getElementById("filterArea");
+      const areas = [...new Set(penjual.map(p=>p.area))];
+      filterArea.innerHTML = '<option value="">Semua Area</option>' +
+        areas.map(a=>`<option value="${a}">${a}</option>`).join('');
+      // filter penjual
+      const filterPenjual = document.getElementById("filterPenjual");
+      filterPenjual.innerHTML = '<option value="">Semua Penjual</option>' +
+        penjual.map(p=>`<option value="${p.nama}">${p.nama}</option>`).join('');
+    }
+    let editPenjualIdx = null;
+    function editPenjual(idx) {
+      const penjual = getData(LS_PENJUAL)[idx];
+      document.getElementById("namaPenjual").value = penjual.nama;
+      document.getElementById("areaPenjual").value = penjual.area;
+      document.getElementById("btnPenjual").innerText = "Simpan Edit";
+      editPenjualIdx = idx;
+    }
+    function tambahPenjual(e) {
+      e.preventDefault();
+      const nama = document.getElementById("namaPenjual").value.trim();
+      const area = document.getElementById("areaPenjual").value.trim();
+      const penjual = getData(LS_PENJUAL);
+      if(editPenjualIdx !== null) {
+        penjual[editPenjualIdx] = {nama, area};
+        setData(LS_PENJUAL, penjual);
+        editPenjualIdx = null;
+        document.getElementById("btnPenjual").innerText = "Tambah Penjual";
+      } else {
+        if(!nama||!area) return false;
+        if (penjual.some(p=>p.nama===nama)) { alert("Penjual sudah ada."); return false;}
+        penjual.push({nama,area});
+        setData(LS_PENJUAL, penjual);
+      }
+      document.getElementById("namaPenjual").value = "";
+      document.getElementById("areaPenjual").value = "";
+      renderPenjualTable();
+      renderTransaksiTable();
+      return false;
+    }
+    function hapusPenjual(idx) {
+      if(!confirm("Hapus penjual ini?")) return;
+      const penjual = getData(LS_PENJUAL);
+      penjual.splice(idx,1);
+      setData(LS_PENJUAL, penjual);
+      renderPenjualTable();
+      renderTransaksiTable();
+    }
+    function renderVoucherTable() {
+      const voucher = getData(LS_VOUCHER);
+      const tbody = document.getElementById("voucherTable");
+      tbody.innerHTML = voucher.length ? "" : "<tr><td colspan=3>Belum ada voucher.</td></tr>";
+      const sess = getSession();
+      const isAdmin = sess && sess.role === "admin";
+      voucher.forEach((v,i)=>{
+        tbody.innerHTML += `<tr>
+          <td>${v.jenis}</td>
+          <td>Rp${parseInt(v.harga).toLocaleString("id-ID")}</td>
+          <td>
+            ${isAdmin ? `
+              <button class="button" onclick="editVoucher(${i})">Edit</button>
+              <button class="button red" onclick="hapusVoucher(${i})">Hapus</button>
+            ` : ""}
+          </td>
+        </tr>`;
+      });
+      // update select options
+      const select = document.getElementById("transVoucher");
+      select.innerHTML = '<option value="">-- Pilih Voucher --</option>' +
+        voucher.map(v=>`<option value="${v.jenis}">${v.jenis}</option>`).join('');
+      // filter voucher
+      const filterVoucher = document.getElementById("filterVoucher");
+      filterVoucher.innerHTML = '<option value="">Semua Jenis</option>' +
+        voucher.map(v=>`<option value="${v.jenis}">${v.jenis}</option>`).join('');
+      // Sembunyikan/tampilkan form tambah voucher sesuai role
+      const formSection = document.querySelector('.form-section form[onsubmit="return tambahVoucher(event)"]').parentElement;
+      if (sess && sess.role !== "admin") {
+        formSection.style.display = "none";
+      } else {
+        formSection.style.display = "flex";
+      }
+    }
+    let editVoucherIdx = null;
+    function editVoucher(idx) {
+      const voucher = getData(LS_VOUCHER)[idx];
+      document.getElementById("jenisVoucher").value = voucher.jenis;
+      document.getElementById("hargaVoucher").value = voucher.harga;
+      document.getElementById("btnVoucher").innerText = "Simpan Edit";
+      editVoucherIdx = idx;
+    }
+    function tambahVoucher(e) {
+      e.preventDefault();
+      const jenis = document.getElementById("jenisVoucher").value.trim();
+      const harga = document.getElementById("hargaVoucher").value;
+      const voucher = getData(LS_VOUCHER);
+      if(editVoucherIdx !== null) {
+        voucher[editVoucherIdx] = {jenis, harga};
+        setData(LS_VOUCHER, voucher);
+        editVoucherIdx = null;
+        document.getElementById("btnVoucher").innerText = "Tambah Voucher";
+      } else {
+        if(!jenis||!harga) return false;
+        if (voucher.some(v=>v.jenis===jenis)) { alert("Voucher sudah ada."); return false;}
+        voucher.push({jenis,harga});
+        setData(LS_VOUCHER, voucher);
+      }
+      document.getElementById("jenisVoucher").value = "";
+      document.getElementById("hargaVoucher").value = "";
+      renderVoucherTable();
+      renderTransaksiTable();
+      return false;
+    }
+    let editTransaksiIdx = null;
+    function editTransaksi(idx) {
+      const trans = getData(LS_TRANSAKSI)[idx];
+      document.getElementById("tanggalTransaksi").value = trans.tgl;
+      document.getElementById("transPenjual").value = trans.penjual;
+      document.getElementById("transVoucher").value = trans.voucher;
+      document.getElementById("masukVoucher").value = trans.masuk;
+      document.getElementById("keluarVoucher").value = trans.keluar;
+      document.querySelector('.form-section form button[type="submit"]').innerText = "Simpan Edit";
+      editTransaksiIdx = idx;
+    }
+    function tambahTransaksi(e) {
+      e.preventDefault();
+      const tgl = document.getElementById("tanggalTransaksi").value;
+      const penjual = document.getElementById("transPenjual").value;
+      const voucher = document.getElementById("transVoucher").value;
+      const masuk = parseInt(document.getElementById("masukVoucher").value) || 0;
+      const keluar = parseInt(document.getElementById("keluarVoucher").value) || 0;
+      const trans = getData(LS_TRANSAKSI);
+      if(editTransaksiIdx !== null) {
+        trans[editTransaksiIdx] = {tgl, penjual, voucher, masuk, keluar};
+        setData(LS_TRANSAKSI, trans);
+        editTransaksiIdx = null;
+        document.querySelector('.form-section form button[type="submit"]').innerText = "Tambah Transaksi";
+      } else {
+        if(!tgl||!penjual||!voucher) return false;
+        trans.push({tgl,penjual,voucher,masuk,keluar});
+        setData(LS_TRANSAKSI, trans);
+      }
+      document.getElementById("tanggalTransaksi").value = "";
+      document.getElementById("transPenjual").value = "";
+      document.getElementById("transVoucher").value = "";
+      document.getElementById("masukVoucher").value = "0";
+      document.getElementById("keluarVoucher").value = "0";
+      renderTransaksiTable();
+      return false;
+    }
+    function hapusTransaksi(idx) {
+      if(!confirm("Hapus transaksi ini?")) return;
+      const trans = getData(LS_TRANSAKSI);
+      trans.splice(idx,1);
+      setData(LS_TRANSAKSI, trans);
+      renderTransaksiTable();
+    }
+    function getSisaStok(penjual, voucher, tglIdx) {
+      const trans = getData(LS_TRANSAKSI);
+      let stok = 0;
+      for(let i=0;i<=tglIdx;i++) {
+        const t = trans[i];
+        if (t.penjual===penjual && t.voucher===voucher)
+          stok += (parseInt(t.masuk)||0) - (parseInt(t.keluar)||0);
+      }
+      return stok;
+    }
+    function renderSummary(filteredTrans, voucherList) {
+      // Total penjualan (jumlah voucher keluar) dan total pendapatan
+      let totalSold = 0;
+      let totalIncome = 0;
+      filteredTrans.forEach(t => {
+        const keluar = parseInt(t.keluar) || 0;
+        totalSold += keluar;
+        const voucher = voucherList.find(v => v.jenis === t.voucher);
+        const harga = voucher ? parseInt(voucher.harga) : 0;
+        totalIncome += keluar * harga;
+      });
+      document.getElementById("totalSold").innerText = totalSold;
+      document.getElementById("totalIncome").innerText = "Rp" + totalIncome.toLocaleString("id-ID");
+    }
+    function renderTransaksiTable() {
+      const penjualList = getData(LS_PENJUAL);
+      const voucherList = getData(LS_VOUCHER);
+      const trans = getData(LS_TRANSAKSI);
+      const tbody = document.getElementById("transaksiTable");
+      let filterArea = document.getElementById("filterArea").value;
+      let filterPenjual = document.getElementById("filterPenjual").value;
+      let filterVoucher = document.getElementById("filterVoucher").value;
+      let filterTanggal = document.getElementById("filterTanggal").value;
+      let filtered = trans.map((t,i)=>({...t,idx:i}));
+      const sess = getSession();
+      const isAdmin = sess && sess.role === "admin";
+      if(filterArea) {
+        const allowed = penjualList.filter(p=>p.area===filterArea).map(p=>p.nama);
+        filtered = filtered.filter(t=>allowed.includes(t.penjual));
+      }
+      if(filterPenjual)
+        filtered = filtered.filter(t=>t.penjual===filterPenjual);
+      if(filterVoucher)
+        filtered = filtered.filter(t=>t.voucher===filterVoucher);
+      if(filterTanggal)
+        filtered = filtered.filter(t=>t.tgl===filterTanggal);
+      tbody.innerHTML = filtered.length ? "" : "<tr><td colspan=8>Belum ada data transaksi.</td></tr>";
+      filtered.forEach((t,i)=>{
+        const penjual = penjualList.find(p=>p.nama===t.penjual);
+        const area = penjual ? penjual.area : "-";
+        const stok = getSisaStok(t.penjual, t.voucher, t.idx);
+        tbody.innerHTML += `<tr>
+          <td>${t.tgl}</td>
+          <td>${t.penjual}</td>
+          <td>${area}</td>
+          <td>${t.voucher}</td>
+          <td>${t.masuk}</td>
+          <td>${t.keluar}</td>
+          <td>${stok}</td>
+          <td>
+            <button class="button" onclick="editTransaksi(${t.idx})">Edit</button>
+            ${isAdmin ? `<button class="button red" onclick="hapusTransaksi(${t.idx})">Hapus</button>` : ""}
+          </td>
+        </tr>`;
+      });
+      renderSummary(filtered, voucherList);
+    }
+    function resetFilter() {
+      document.getElementById("filterArea").value = "";
+      document.getElementById("filterPenjual").value = "";
+      document.getElementById("filterVoucher").value = "";
+      document.getElementById("filterTanggal").value = "";
+      renderTransaksiTable();
+    }
+    function exportToCSV() {
+      const trans = getData(LS_TRANSAKSI);
+      if(!trans.length) { alert("Belum ada data transaksi"); return; }
+      let csv = "Tanggal,Penjual,Area,Jenis Voucher,Masuk,Keluar,Sisa Stok\n";
+      const penjualList = getData(LS_PENJUAL);
+      trans.forEach((t,i)=>{
+        const penjual = penjualList.find(p=>p.nama===t.penjual);
+        const area = penjual ? penjual.area : "-";
+        const stok = getSisaStok(t.penjual, t.voucher, i);
+        csv += `${t.tgl},${t.penjual},${area},${t.voucher},${t.masuk},${t.keluar},${stok}\n`;
+      });
+      const blob = new Blob([csv], {type: "text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "laporan_transaksi_voucher.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    function initDummy() {
+      if(!localStorage.getItem(LS_PENJUAL)) setData(LS_PENJUAL, [
+        {nama:"Budi", area:"Jakarta"}, {nama:"Ani", area:"Bandung"}
+      ]);
+      if(!localStorage.getItem(LS_VOUCHER)) setData(LS_VOUCHER, [
+        {jenis:"Rp.2.000 6 Jam", harga:2000},
+        {jenis:"Rp.3.000 12 Jam", harga:3000},
+        {jenis:"Rp.5.000 1 Hari", harga:5000},
+        {jenis:"Rp.10.000 3 Hari", harga:10000},
+        {jenis:"Rp.50.000 30 Hari", harga:50000}
+      ]);
+      if(!localStorage.getItem(LS_TRANSAKSI)) setData(LS_TRANSAKSI, [
+        {tgl:"2025-07-01", penjual:"Budi", voucher:"Rp.2.000 6 Jam", masuk:100, keluar:50},
+        {tgl:"2025-07-02", penjual:"Ani", voucher:"Rp.10.000 3 Hari", masuk:60, keluar:20}
+      ]);
+    }
+    function initAll() {
+      initDummy();
+      renderPenjualTable();
+      renderVoucherTable();
+      renderTransaksiTable();
+      let sess = getSession();
+      let roleTxt = "";
+      if(sess) {
+        if(sess.role=="admin") {
+          roleTxt = "Login sebagai <b>Admin/Pemilik</b>. Semua fitur terbuka.";
+          document.getElementById("roleInfo").dataset.role = "admin";
+          adminApproveList();
+        } else {
+          roleTxt = "Login sebagai <b>Karyawan/Editor</b>. Akses editor aktif.";
+          document.getElementById("roleInfo").dataset.role = "editor";
+        }
+      }
+      document.getElementById("roleInfo").innerHTML = roleTxt;
+    }
+    window.onload = function() {
+      ensureAdmin();
+      showLogin();
+    };
+    // Tambahkan setelah initAll() dipanggil di login admin
+    setInterval(function() {
+      if (document.getElementById("dashboard") && document.getElementById("roleInfo").dataset.role === 'admin') {
+        adminApproveList();
+      }
+    }, 5000); // cek setiap 5 detik
+  </script>
+</body>
+</html>
